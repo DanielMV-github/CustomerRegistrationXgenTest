@@ -1,0 +1,8 @@
+﻿<div style="margin-left:-95%">
+    <a href="/Home/Index"><b>Página Inicial</b></a>
+</div>
+
+
+@model CustomerRegistration.Mvc.ViewModel.ClientViewModel
+<h2 class="major">@ViewBag.Title</h2>
+@Html.Partial("~/Views/Client/ClientPartialView/CreateClientPartialView.cshtml", Model)

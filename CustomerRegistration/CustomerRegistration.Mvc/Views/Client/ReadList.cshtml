@@ -1,0 +1,62 @@
+﻿@model CustomerRegistration.Mvc.ViewModel.ClientViewModel
+
+<div style="margin-left:-95%">
+    <a href="/Home/Index"><b>Página Inicial</b></a>
+</div>
+
+<h2>Lista de Clientes</h2>
+<table style="width:100%">
+    <tr>
+        <th>Nome</th>
+        <th>CPF</th>
+        <th>Visualizar-Alterar</th>
+        <th>Deletar</th>
+    </tr>
+
+    <input id="hdnQtdItensList" type="hidden" value="@Model.ClientViewModelList.Count">
+    <input id="hdnQtdItensDelete" type="hidden" value="0">
+
+
+    @foreach (var item in Model.ClientViewModelList)
+    {
+        <tr id="@item.Cpf">
+            <td>@item.Name @item.LastName</td>
+            <td>@Convert.ToUInt64(item.Cpf).ToString(@"000\.000\.000\-00")</td>
+            <td><a href="#" name="ancReadClient"><b>Visualizar-Alterar</b></a></td>
+            <td><a href="#" name="ancDeleteClient"><b>Deletar</b></a></td>
+        </tr>
+    }
+</table>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("a[name ='ancReadClient']").click(function () {
+            window.location.href = "/Client/Read?cpf=" + $(this).parents(':eq(1)').attr("id");
+        });
+        $("a[name ='ancDeleteClient']").click(function () {
+            var strCpf = $(this).parents(':eq(1)').attr("id");
+            $.ajax({
+                method: "GET",
+                url: "/Client/Delete",
+                data: { cpf: strCpf },
+                success: function (result) {
+                    if (result.NameHttpStatusCode != "OK")
+                        alert(result.Message);
+                    else {
+                        var qtdItensList = parseInt($("#hdnQtdItensList").val());
+                        var qtdItensDelete = parseInt($("#hdnQtdItensDelete").val());
+                        qtdItensDelete = qtdItensDelete + 1;
+                        $("#hdnQtdItensDelete").val(qtdItensDelete);
+
+                        if (qtdItensDelete == qtdItensList)
+                            window.location.href = "/Home/Index";
+                        else {
+                            $("#" + strCpf).remove();
+                            alert("Cliente Deletado com sucesso");
+                        }
+                    }
+                }
+            });
+        });
+    });
+</script>

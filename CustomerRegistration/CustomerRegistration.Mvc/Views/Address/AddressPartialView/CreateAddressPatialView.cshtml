@@ -1,0 +1,46 @@
+﻿@using CustomerRegistration.Mvc.ViewModel
+
+@model CustomerRegistration.Mvc.ViewModel.AddressViewModel
+
+<div>
+    <form id="sendAddress">
+        @Html.HiddenFor(model => model.IdAddress)
+        <input id="actionFormAddress" value="create" type="hidden">
+        <div class="fields">
+            <div class="field third">
+                <label class="colorElementModal">Logradouro</label>
+                @Html.TextBoxFor(model => model.PublicPlace, new { @required = "required", @style = "border-color: black;" })
+            </div>
+
+            <div class="field third">
+                <label class="colorElementModal">Número</label>
+                @Html.TextBoxFor(model => model.Number, new { @required = "required", @style = "border-color: black;" })
+            </div>
+
+            <div class="field third">
+                <label class="colorElementModal">Bairro</label>
+                @Html.TextBoxFor(model => model.Neighborhood, new { @required = "required", @style = "border-color: black;" })
+            </div>
+
+            <div class="field third">
+                <label class="colorElementModal">Estado</label>
+                @Html.DropDownListFor(model => model.StateClient,
+                        new SelectList(Enum.GetValues(typeof(State))),
+                        new { @required = "required", @style = "border-color: black;" })
+            </div>
+
+            <div class="field third">
+                <label class="colorElementModal">Cidade</label>
+                @Html.TextBoxFor(model => model.City, new { @required = "required", @style = "border-color: black;" })
+            </div>
+
+            <div class="field third">
+                <label class="colorElementModal">CEP</label>
+                @Html.TextBoxFor(model => model.ZipCode, new { @required = "required", @style = "border-color: black;" })
+            </div>
+        </div>
+        <ul class="actions">
+            <li><input type="submit" value="Enviar" style="background-color:black" /></li>
+        </ul>
+    </form>
+</div>

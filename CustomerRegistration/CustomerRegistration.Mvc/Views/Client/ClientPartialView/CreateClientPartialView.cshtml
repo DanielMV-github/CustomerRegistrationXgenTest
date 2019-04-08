@@ -1,0 +1,233 @@
+﻿@using CustomerRegistration.Mvc.ViewModel
+
+@model CustomerRegistration.Mvc.ViewModel.ClientViewModel
+
+@using (Html.BeginForm(Model.ActionName, Model.ControllerName))
+{
+    @Html.HiddenFor(model => model.IdClient)
+    @Html.HiddenFor(model => model.ActionName)
+    @Html.HiddenFor(model => model.ControllerName)
+    @Html.HiddenFor(model => model.ShowAddressAccess)
+
+    <div class="fields">
+        <div class="field third">
+            <label>Nome</label>
+            @Html.TextBoxFor(model => model.Name, new { @required = "required" })
+        </div>
+
+        <div class="field third">
+            <label>Sobre Nome</label>
+            @Html.TextBoxFor(model => model.LastName, new { @required = "required" })
+        </div>
+
+        <div class="field third">
+            <label>CPF</label>
+            @Html.TextBoxFor(model => model.Cpf, new { @required = "required" })
+        </div>
+
+        <div class="field third">
+            <label>E-Mail</label>
+            @Html.TextBoxFor(model => model.Email, new { @required = "required", @type = "email" })
+        </div>
+
+        <div class="field third">
+            <label>Telefone</label>
+            @Html.TextBoxFor(model => model.Telephone, new { @required = "required" })
+        </div>
+
+        <div class="field third">
+            <label>Dat. Nascimento</label>
+            @Html.TextBoxFor(model => model.BirthDate, new { @required = "required" })
+        </div>
+
+        <div class="field third">
+            <label>Sexo</label>
+            @Html.DropDownListFor(model => model.SexClient,
+                    new SelectList(Enum.GetValues(typeof(Sex))),
+                    new { @required = "required" })
+        </div>
+
+        <div class="field third">
+            <label>Status Civil</label>
+            @Html.DropDownListFor(model => model.MaritalStatusClient,
+                    new SelectList(Enum.GetValues(typeof(MaritalStatus))),
+                    new { @required = "required" })
+        </div>
+    </div>
+    <ul class="actions">
+        <li><input type="submit" value="Enviar" class="primary" /></li>
+        @if (Model.ShowAddressAccess)
+        {
+            <li><input id="btnDeleteClient" type="button" value="Excluir" /></li>
+            <li><input id="btnAddAddress" type="button" value="Adicionar Endereço" onclick="location.href='#openModalCadastrarEndereco';" /></li>
+        }
+    </ul>
+}
+
+<br>
+<br>
+
+@if (Model.ShowAddressAccess)
+{
+    if (Model.AddressList != null)
+    {
+        if (Model.AddressList.Count > 0)
+        {
+            <h2>Lista de Endereços</h2>
+            <table style="width:100%">
+                <tr>
+                    <th>Endereço</th>
+                    <th>Atualizar</th>
+                    <th>Deletar</th>
+                </tr>
+                @foreach (var item in Model.AddressList)
+                {
+                    <tr id="@item.IdAddress">
+                        <td>@string.Format("{0} nº {1} {2},{3} {4}", item.PublicPlace, item.Number, item.Neighborhood, item.City, item.StateClient)</td>
+                        <td><a href="#" name="ancUpdateAddress"><b>Atualizar</b></a></td>
+                        <td><a href="#" name="ancDeleteAddress"><b>Deletar</b></a></td>
+                    </tr>
+                }
+            </table>
+        }
+    }
+}
+
+<div id="openModalCadastrarEndereco" class="modalDialog">
+    <div style="color:black">
+        <a id="closeModalAddress" href="#close" title="Fechar" class="closeModal"></a>
+        <!-- Content Modal -->
+        <h2 id="tituloModal" class="major" style="color:black">Cadastrar Endereço</h2>
+        @Html.Partial("~/Views/Address/AddressPartialView/CreateAddressPatialView.cshtml", new AddressViewModel() { IdClient = Model.IdClient })
+        <hr>
+        <!-- Content do Modal -->
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#Cpf').mask('000.000.000-00', { reverse: true });
+        $('#BirthDate').mask('00/00/0000', { reverse: true });
+        $('#ZipCode').mask('00000-000', { reverse: true });
+        $('#Number').mask('0000000000', { reverse: true });
+        maskTelephone('Telephone');
+        $('#btnDeleteClient').click(function () {
+            $.ajax({
+                method: "GET",
+                url: "/Client/Delete",
+                data: { cpf: $("#Cpf").val() },
+                success: function (result) {
+                    if (result.NameHttpStatusCode != "OK")
+                        alert(result.Message);
+                    else {
+                        window.location.href = "/Home/Index";
+                    }
+                }
+            });
+        });
+        $('#sendAddress').submit(function (e) {
+            e.preventDefault();
+            var urlSend;
+
+            if ($('#actionFormAddress').val() == "create")
+                urlSend = "/Address/Create";
+            else
+                urlSend = "/Address/Update";
+
+            var jsonAddress = jsonFormAddressForServer();
+            $.ajax({
+                method: "POST",
+                url: urlSend,
+                data: jsonAddress,
+                success: function (result) {
+                    if (result.NameHttpStatusCode != "OK")
+                        alert(result.Message);
+                    else
+                        window.location.href = "/Client/Read?cpf=" + $('#Cpf').val();
+                }
+            });
+        });
+        $("a[name ='ancUpdateAddress']").click(function () {
+            $.ajax({
+                method: "GET",
+                url: "/Address/Read",
+                data: { idAddress: $(this).parents(':eq(1)').attr("id") },
+                success: function (result) {
+                    if (result.NameHttpStatusCode != "OK")
+                        alert(result.Message);
+                    else {
+                        formAddressForModal(JSON.parse(result.Value));
+                        $('#btnAddAddress').trigger('click');
+                    }
+                }
+            });
+        });
+        $("a[name ='ancDeleteAddress']").click(function () {
+            $.ajax({
+                method: "GET",
+                url: "/Address/Delete",
+                data: { idAddress: $(this).parents(':eq(1)').attr("id") },
+                success: function (result) {
+                    if (result.NameHttpStatusCode != "OK")
+                        alert(result.Message);
+                    else {
+                        window.location.href = "/Client/Read?cpf=" + $('#Cpf').val();
+                    }
+                }
+            });
+        });
+        $("#closeModalAddress").click(function () {
+            CleanformAddressModal();
+        });
+    });
+    function maskTelephone(idElement) {
+        // Configuration
+        var SPMaskBehavior = function (val) {
+            return val.replace(/\D/g, '').length === 11 ? '(00) 00000-0000' : '(00) 0000-00009';
+        }, spOptions = {
+            onKeyPress: function (val, e, field, options) {
+                field.mask(SPMaskBehavior.apply({}, arguments), options);
+            }
+        };
+        $('#' + idElement).mask(SPMaskBehavior, spOptions);
+    }
+    function jsonFormAddressForServer() {
+        var json = {
+            IdAddress: $('#IdAddress').val(),
+            PublicPlace: $('#PublicPlace').val(),
+            Number: $('#Number').val(),
+            Neighborhood: $('#Neighborhood').val(),
+            StateClient: $('#StateClient').val(),
+            City: $('#City').val(),
+            ZipCode: $('#ZipCode').val(),
+            IdClient: $('#IdClient').val(),
+            CpfClient: $('#Cpf').val()
+        };
+        return json;
+    }
+    function formAddressForModal(objectAddressServer) {
+        $('#IdAddress').val(objectAddressServer.IdAddress);
+        $('#PublicPlace').val(objectAddressServer.PublicPlace);
+        $('#Number').val(objectAddressServer.Number);
+        $('#Neighborhood').val(objectAddressServer.Neighborhood);
+        $("#StateClient option:selected").text(objectAddressServer.StateClientText);
+        $('#City').val(objectAddressServer.City);
+        $('#ZipCode').val(objectAddressServer.ZipCode);
+        $('#IdClient').val(objectAddressServer.IdClient);
+        $('#tituloModal').text("Editar Endereço");
+        $('#actionFormAddress').val("update");
+    }
+    function CleanformAddressModal() {
+        $('#IdAddress').val("");
+        $('#PublicPlace').val("");
+        $('#Number').val("");
+        $('#Neighborhood').val("");
+        $('#StateClient select').val();
+        $("#StateClient option:selected").text("AL");
+        $('#City').val("");
+        $('#ZipCode').val("");
+        $('#tituloModal').text("Cadastrar Endereço");
+        $('#actionFormAddress').val("create");
+    }
+</script>
+

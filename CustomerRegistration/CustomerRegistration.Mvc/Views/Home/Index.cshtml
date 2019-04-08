@@ -1,0 +1,94 @@
+﻿@{
+    ViewBag.Title = "Página Inicial";
+}
+
+<!-- Header -->
+<header id="header">
+    <div class="content">
+        <div class="inner">
+            <h1>crud de clientes</h1>
+            <p>
+                <b> Objetivo </b>: Criar um modelo para atender um cadastro de clientes, onde um cliente pode conter 1 ou mais endereços.
+            </p>
+        </div>
+    </div>
+    <nav>
+        <ul>
+            <li><a href="/Client/Create">Criar</a></li>
+            <li><a href="/Client/ReadList">Buscar</a></li>
+            <li><a href="#openModalUpdateClient">Alterar</a></li>
+            <li><a href="#openModalDeleteClient">Deletar</a></li>
+        </ul>
+    </nav>
+</header>
+
+<div id="openModalUpdateClient" class="modalDialog">
+    <div style="color:black; width:450px">
+        <a id="closeModalUpdateClient" href="#close" title="Fechar" class="closeModal"></a>
+        <!-- Content Modal -->
+        <h4 class="major" style="color:black">Alterar Cliente</h4>
+        <form action="/Client/Read" method="get">
+            <div class="fields">
+                <div class="field half">
+                    <label class="colorElementModal">CPF</label>
+                    <input id="cpf" name="cpf" type="text" required style="border-color: black; width:400px">
+                </div>
+            </div>
+            <ul class="actions">
+                <li><input type="submit" value="Buscar" style="background-color:black" /></li>
+            </ul>
+        </form>
+        <hr>
+        <!-- Content do Modal -->
+    </div>
+</div>
+
+<div id="openModalDeleteClient" class="modalDialog">
+    <div style="color:black; width:450px">
+        <a id="closeModalDeleteClient" href="#close" title="Fechar" class="closeModal"></a>
+        <!-- Content Modal -->
+        <h4 class="major" style="color:black">Excluir Cliente</h4>
+        <form id="formModalDeleteClient" action="#">
+            <div class="fields">
+                <div class="field half">
+                    <label class="colorElementModal">CPF</label>
+                    <input id="cpfDelete" name="cpfDelete" type="text" required style="border-color: black; width:400px">
+                </div>
+            </div>
+            <ul class="actions">
+                <li><input type="submit" value="Excluir" style="background-color:black" /></li>
+            </ul>
+        </form>
+        <hr>
+        <!-- Content do Modal -->
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#cpf').mask('000.000.000-00', { reverse: true });
+        $('#cpfDelete').mask('000.000.000-00', { reverse: true });
+        $("#closeModalUpdateClient").click(function () {
+            $("#cpf").val("");
+        });
+        $("#closeModalDeleteClient").click(function () {
+            $("#cpfDelete").val("");
+        });
+        $("#formModalDeleteClient").submit(function (e) {
+            e.preventDefault;
+            $.ajax({
+                method: "GET",
+                url: "/Client/Delete",
+                data: { cpf: $('#cpfDelete').val() },
+                success: function (result) {
+                    if (result.NameHttpStatusCode != "OK")
+                        alert(result.Message);
+                    else {
+                        alert("Cliente excluido com sucesso");
+                        $("#closeModalDeleteClient").trigger("click");
+                    }
+                }
+            });
+        });
+    });
+</script>

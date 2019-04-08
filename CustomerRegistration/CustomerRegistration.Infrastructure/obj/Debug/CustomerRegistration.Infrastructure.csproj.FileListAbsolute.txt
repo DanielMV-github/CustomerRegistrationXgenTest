@@ -1,0 +1,9 @@
+C:\Users\Daniel\source\repos\CustomerRegistration\CustomerRegistration.Infrastructure\bin\Debug\CustomerRegistration.Infrastructure.dll
+C:\Users\Daniel\source\repos\CustomerRegistration\CustomerRegistration.Infrastructure\bin\Debug\CustomerRegistration.Infrastructure.pdb
+C:\Users\Daniel\source\repos\CustomerRegistration\CustomerRegistration.Infrastructure\bin\Debug\CustomerRegistration.Domain.dll
+C:\Users\Daniel\source\repos\CustomerRegistration\CustomerRegistration.Infrastructure\bin\Debug\CustomerRegistration.Domain.pdb
+C:\Users\Daniel\source\repos\CustomerRegistration\CustomerRegistration.Infrastructure\obj\Debug\CustomerRegistration.Infrastructure.csprojAssemblyReference.cache
+C:\Users\Daniel\source\repos\CustomerRegistration\CustomerRegistration.Infrastructure\obj\Debug\CustomerRegistration.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Users\Daniel\source\repos\CustomerRegistration\CustomerRegistration.Infrastructure\obj\Debug\CustomerRegistration.Infrastructure.csproj.CopyComplete
+C:\Users\Daniel\source\repos\CustomerRegistration\CustomerRegistration.Infrastructure\obj\Debug\CustomerRegistration.Infrastructure.dll
+C:\Users\Daniel\source\repos\CustomerRegistration\CustomerRegistration.Infrastructure\obj\Debug\CustomerRegistration.Infrastructure.pdb
